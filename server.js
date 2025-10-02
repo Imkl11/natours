@@ -1,10 +1,16 @@
 const dotEnv = require('dotenv');
-dotEnv.config({path : './config.env'})
+dotEnv.config({path : './config.env'});
+const mongoose = require('mongoose');
 const app  = require('./app');
 
-console.log(process.env)
+const mongoDbDriver = process.env.DB_DRIVER.replace('<PASSWORD>', process.env.DB_PASSWORD);
 
-const port = 4000;
+mongoose.connect(mongoDbDriver).then( con => console.log('DB Connection Successful'))
+
+
+
+const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
     console.log(`Server Started at http://localhost:${port}/`)
 })
