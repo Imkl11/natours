@@ -1,6 +1,7 @@
 // const fs = require('fs');
 const Tour = require('../models/tourModels');
-
+// const qs = require('qs');
+const ApiFeatures = require('../utils/apiFeatures.js');
 
 // USING FILE SYSYTEM AND UPDATING A TEXT FILE
 
@@ -201,7 +202,51 @@ const Tour = require('../models/tourModels');
 // USING DB SYSTEM FOR CRUD OPERATIONS
 exports.getAllTours = async (req, res) => {
     try {
-        const tour = await  Tour.find();
+        // const parsed = qs.parse(req.query);
+        // const queryObject = {...parsed}
+
+        // // It is required as sort and page etc these fields are not in documents so if we find page in tour model then it will return empty array
+        // const excludedFields = ['sort', 'page', 'limit', 'fields']; 
+        // excludedFields.forEach(el => delete queryObject[el]);
+
+        // //1. FILTERING
+        // let updatedQuery = JSON.stringify(queryObject).replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+        // updatedQuery = JSON.parse(updatedQuery);
+
+        // let mongooseQuery = Tour.find(updatedQuery)
+        
+        //2. SORTING
+        // if (req.query.sort) {
+        //     const sortBy = req.query.sort.split(',').join(' ')
+        //     mongooseQuery = mongooseQuery.sort(sortBy) // Parmas should be a string with multiple word with space
+        // } else {
+        //     mongooseQuery = mongooseQuery.sort('-createdAt') 
+        // }
+
+        //3. FIELD LIMTING
+        // if (req.query.fields) {
+        //     const fields = req.query.fields.split(',').join(' ')
+        //     mongooseQuery = mongooseQuery.select(fields) // Parmas should be a string with multiple word with space
+        // } else {
+        //     mongooseQuery = mongooseQuery.select('-__v') 
+        // }
+
+        //4. PAGINATION
+
+        // const page = req.query.page * 1 || 1;
+        // const limit = req.query.limit * 1 || 10;
+        // const skip = (page-1) * limit;
+        // if (req.query.page) {
+        //     const countTours =  await Tour.countDocuments();
+        //     if (skip >= countTours) throw new Error("This page doesn't exist");
+        // }
+
+        // mongooseQuery = mongooseQuery.skip(skip).limit(limit); 
+        // const tour = await mongooseQuery;
+
+        const apiFeatures = new ApiFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate()
+
+        const tour = await apiFeatures.dbQuery;
         res.status(200).json({
             status: 'success',
             data: tour,

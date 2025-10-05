@@ -48,6 +48,11 @@ const tourSchema = mongoose.Schema({
         type: String,
         required: [true, 'A tour must has a image cover'],
     },
+    createdAt:{
+        type: Date,
+        default: Date.now(),
+        select : false
+    }
 })
 
 const Tour = mongoose.model('Tour', tourSchema);
